@@ -128,4 +128,43 @@ class Str extends BaseStr
 
         return $fields->getVersion() === $version;
     }
+
+
+    /**
+     * Set the callable that will be used to generate random strings.
+     */
+    public static function createRandomStringsUsing(?callable $factory = null)
+    {
+        static::$randomStringFactory = $factory;
+    }
+
+    /**
+     * Indicate that random strings should be created normally and not using a custom factory.
+     */
+    public static function createRandomStringsNormally()
+    {
+        static::$randomStringFactory = null;
+    }
+
+    /**
+     * Generate a more truly "random" alpha-numeric string.
+     */
+    public static function random(int $length = 16): string
+    {
+        return (static::$randomStringFactory ?? function ($length) {
+            $string = '';
+
+            while (($len = strlen($string)) < $length) {
+                $size = $length - $len;
+
+                $bytesSize = (int) ceil($size / 3) * 3;
+
+                $bytes = random_bytes($bytesSize);
+
+                $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
+            }
+
+            return $string;
+        })($length);
+    }
 }
