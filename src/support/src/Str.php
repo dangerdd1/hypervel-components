@@ -14,6 +14,13 @@ use Stringable;
 class Str extends BaseStr
 {
     /**
+     * The callback that should be used to generate random strings.
+     *
+     * @var null|(callable(int): string)
+     */
+    protected static $randomStringFactory;
+
+    /**
      * Get a string from a BackedEnum, Stringable, or scalar value.
      *
      * Useful for APIs that accept mixed identifier types, such as
@@ -128,7 +135,6 @@ class Str extends BaseStr
 
         return $fields->getVersion() === $version;
     }
-
 
     /**
      * Set the callable that will be used to generate random strings.
