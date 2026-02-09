@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hypervel\Validation;
 
-use BackedEnum;
 use Closure;
 use Hyperf\Contract\Arrayable;
 use Hypervel\Support\Arr;
@@ -14,8 +13,10 @@ use Hypervel\Validation\Contracts\ValidationRule;
 use Hypervel\Validation\Rules\AnyOf;
 use Hypervel\Validation\Rules\ArrayRule;
 use Hypervel\Validation\Rules\Can;
+use Hypervel\Validation\Rules\Contains;
 use Hypervel\Validation\Rules\Date;
 use Hypervel\Validation\Rules\Dimensions;
+use Hypervel\Validation\Rules\DoesntContain;
 use Hypervel\Validation\Rules\Email;
 use Hypervel\Validation\Rules\Enum;
 use Hypervel\Validation\Rules\ExcludeIf;
@@ -100,7 +101,7 @@ class Rule
     /**
      * Get an in rule builder instance.
      */
-    public static function in(array|Arrayable|BackedEnum|string|UnitEnum $values): In
+    public static function in(array|Arrayable|UnitEnum|string $values): In
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -112,13 +113,37 @@ class Rule
     /**
      * Get a not_in rule builder instance.
      */
-    public static function notIn(array|Arrayable|BackedEnum|string|UnitEnum $values): NotIn
+    public static function notIn(array|Arrayable|UnitEnum|string $values): NotIn
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
         }
 
         return new NotIn(is_array($values) ? $values : func_get_args());
+    }
+
+    /**
+     * Get a contains rule builder instance.
+     */
+    public static function contains(array|Arrayable|UnitEnum|string $values): Contains
+    {
+        if ($values instanceof Arrayable) {
+            $values = $values->toArray();
+        }
+
+        return new Contains(is_array($values) ? $values : func_get_args());
+    }
+
+    /**
+     * Get a doesnt_contain rule builder instance.
+     */
+    public static function doesntContain(array|Arrayable|UnitEnum|string $values): DoesntContain
+    {
+        if ($values instanceof Arrayable) {
+            $values = $values->toArray();
+        }
+
+        return new DoesntContain(is_array($values) ? $values : func_get_args());
     }
 
     /**
@@ -151,6 +176,14 @@ class Rule
     public static function date(): Date
     {
         return new Date();
+    }
+
+    /**
+     * Get a datetime rule builder instance.
+     */
+    public static function dateTime(): Date
+    {
+        return (new Date())->format('Y-m-d H:i:s');
     }
 
     /**

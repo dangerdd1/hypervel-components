@@ -8,6 +8,9 @@ use Closure;
 use DateTimeZone;
 use Hypervel\Support\Carbon;
 use InvalidArgumentException;
+use UnitEnum;
+
+use function Hypervel\Support\enum_value;
 
 trait ManagesFrequencies
 {
@@ -499,8 +502,6 @@ trait ManagesFrequencies
 
     /**
      * Schedule the event to run yearly on a given month, day, and time.
-     *
-     * @param int|string|string $dayOfMonth
      */
     public function yearlyOn(int $month = 1, int|string $dayOfMonth = 1, string $time = '0:0'): static
     {
@@ -525,9 +526,11 @@ trait ManagesFrequencies
     /**
      * Set the timezone the date should be evaluated on.
      */
-    public function timezone(DateTimeZone|string $timezone): static
+    public function timezone(DateTimeZone|UnitEnum|string $timezone): static
     {
-        $this->timezone = $timezone;
+        $this->timezone = $timezone instanceof UnitEnum
+            ? enum_value($timezone)
+            : $timezone;
 
         return $this;
     }
